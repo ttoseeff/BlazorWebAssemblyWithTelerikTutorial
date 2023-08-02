@@ -26,6 +26,8 @@ namespace BlazorProject.Client
             {
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
             });
+            // Register the Telerik services.
+            builder.Services.AddTelerikBlazor();
             await builder.Build().RunAsync();
         }
     }

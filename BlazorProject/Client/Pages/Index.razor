@@ -2,14 +2,33 @@
 @using BlazorProject.Shared
 @using Syncfusion.Blazor.Grids
 
-<SfGrid DataSource="@Employees">
+@*<SfGrid DataSource="@Employees">
     <GridColumns>
         <GridColumn Field=@nameof(Employee.EmployeeId) HeaderText="ID"></GridColumn>
         <GridColumn Field=@nameof(Employee.FirstName) HeaderText="First Name"></GridColumn>
         <GridColumn Field=@nameof(Employee.LastName) HeaderText=" Last Name"></GridColumn>
         <GridColumn Field=@nameof(Employee.Email) HeaderText="Email"></GridColumn>
     </GridColumns>
-</SfGrid>
+</SfGrid>*@
+
+<TelerikButton>Click me.</TelerikButton>
+
+
+<TelerikButton OnClick="@SayHelloHandler" ThemeColor="primary">Click me please</TelerikButton>
+
+<br />
+
+<p>@helloString</p>
+
+@code {
+    MarkupString helloString;
+
+    void SayHelloHandler()
+    {
+        string msg = string.Format("Hello from <strong>Telerik Blazor</strong> at {0}.<br /> Now you can use C# to write front-end!", DateTime.Now);
+        helloString = new MarkupString(msg);
+    }
+}
 
 @code {
     [Inject]
