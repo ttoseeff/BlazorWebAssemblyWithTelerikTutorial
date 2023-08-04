@@ -29,26 +29,96 @@
                                  Value="@(Employee.DepartmentId)"
                                  ValueExpression="@(() => Employee.DepartmentId)"
                                  ValueChanged="@((int value) => DepartmentChangeEvent(value))">
+                    <HeaderTemplate>
+                        Department List
+                    </HeaderTemplate>
+                    <FooterTemplate>
+                        Department List
+                    </FooterTemplate>
+                    <ValueTemplate Context="dpt">
+                        @dpt.DepartmentId - @dpt.DepartmentName
+                    </ValueTemplate>
+                    <ItemTemplate Context="dpt">
+                        @($"{dpt.DepartmentId} - {dpt.DepartmentName}")
+                    </ItemTemplate>
                 </TelerikDropDownList>
             }
-            
+
         </div>
         <div class="col-md-6">
             <p></p>
             <p>@DepartmentIdText</p>
         </div>
         <div class="col-md-6">
-            <label for="inputPassword4" class="form-label">Password</label>
-            <input type="password" class="form-control" id="inputPassword4">
+            <label for="acDepartment" class="form-label">Departments</label>
+            @if (DepartmentList.Count > 0)
+            {
+                <TelerikAutoComplete Id="acDepartment"
+                                 Class="form-control"
+                                 @bind-Value="Employee.Department.DepartmentName"
+                                 Data="DepartmentList"
+                                 ValueField="@nameof(Department.DepartmentName)"
+                                 Filterable="true"
+                                 MinLength="1"
+                                 FilterOperator="StringFilterOperator"
+                                 Placeholder="Please select a department"
+                                 ClearButton="false"
+                                 OnChange="DepartmentACChangeEvent">
+                    <HeaderTemplate>
+                        Department list
+                    </HeaderTemplate>
+                    <FooterTemplate>
+                        Department List
+                    </FooterTemplate>
+                    <ItemTemplate Context="dpt">
+                        @dpt.DepartmentName - @dpt.DepartmentId
+                    </ItemTemplate>
+                </TelerikAutoComplete>
+                <span>@Employee.Department.DepartmentName</span>
+            }
         </div>
-        <div class="col-12">
-            <label for="inputAddress" class="form-label">Address</label>
-            <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+        <div class="col-6">
+            <label for="MSDepartment" class="form-label">Multi Department Selection</label>
+            <TelerikMultiSelect Id="MSDepartment"
+                                Class="form-control"
+                                Data="DepartmentList"
+                                ValueField="@nameof(Department.DepartmentId)"
+                                TextField="@nameof(Department.DepartmentName)"
+                                Filterable="true"
+                                ValueExpression="@(() => SelectedDepartments)"
+                                ValueChanged="@((List<int> value) => MultiSelectDepartmentChangeEvent(value))">
+
+            </TelerikMultiSelect>
         </div>
-        <div class="col-12">
-            <label for="inputAddress2" class="form-label">Address 2</label>
-            <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+        <div class="col-6">
+            <p></p>
+            @foreach (var item in SelectedDepartments)
+            {
+                <span>@DepartmentList.FirstOrDefault(x=> x.DepartmentId == item)?.DepartmentName</span><span>,</span>
+            }
         </div>
+        @if(SubscriptionsList != null && SubscriptionsList.Count > 0)
+        {
+            <div class="col-6">
+                   
+            </div>
+            <div class="col-6">
+                     <label for="chkAll" class="form-label">
+                    <TelerikCheckBox Id="chkAll" Class="form-control" @bind-Value="CheckAll" Indeterminate="CheckAllIndescriminate"></TelerikCheckBox>
+                        All
+                    </label>
+                @foreach (var sub in SubscriptionsList)
+                {
+                    <div class="col-12 row">
+                    <label for="@sub.Id" class="form-label">
+                        <TelerikCheckBox Id="@sub.Id.ToString()" Class="form-control" @bind-Value="@sub.Selected"></TelerikCheckBox>
+                        @sub.SubscriptionName
+                    </label>
+                    </div>
+                }
+
+            </div>
+        }
         <div class="col-md-6">
             <label for="inputCity" class="form-label">City</label>
             <input type="text" class="form-control" id="inputCity">
