@@ -4,14 +4,16 @@ using BlazorProject.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BlazorProject.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230804121958_CityForeignkey")]
+    partial class CityForeignkey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,7 +163,10 @@ namespace BlazorProject.Server.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CityId")
+                    b.Property<string>("CityId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CityId1")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -169,7 +174,7 @@ namespace BlazorProject.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
+                    b.HasIndex("CityId1");
 
                     b.ToTable("Publishers");
                 });
@@ -189,9 +194,7 @@ namespace BlazorProject.Server.Migrations
                 {
                     b.HasOne("BlazorProject.Shared.City", "City")
                         .WithMany()
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CityId1");
 
                     b.Navigation("City");
                 });

@@ -18,6 +18,10 @@ namespace BlazorProject.Server.Models
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
 
+        public DbSet<City> Cities { get; set; }
+
+        public DbSet<Publishers> Publishers { get; set; }   
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

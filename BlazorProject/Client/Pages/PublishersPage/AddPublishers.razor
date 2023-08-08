@@ -1,0 +1,136 @@
+﻿@page "/publishers"
+@inherits AddPublisherBase
+
+<h3>AddPublishers</h3>
+
+<EditForm Model="Publisher" OnValidSubmit="CreatePublisher" class="mb-3">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="publisherName" class="form-label">Name</label>
+        <TelerikTextBox Id="publisherName"
+                        Class="form-control"
+                        @bind-Value="Publisher.Name">
+        </TelerikTextBox>
+        <ValidationMessage For="@(() => Publisher.Name)" />
+
+    </div>
+    <div class="mb-3">
+        <label for="city" class="form-label">Cities</label>
+        <TelerikDropDownList Id="city"
+                             Class="form-control"
+                             Data="ListofCities"
+                             ValueField="@nameof(City.Id)"
+                             TextField="@nameof(City.Name)"
+                             @bind-Value="Publisher.CityId">
+        </TelerikDropDownList>
+    </div>
+    <TelerikButton OnClick="ClearPublisher"
+                   ButtonType="ButtonType.Button"
+                   ThemeColor="secondary">
+        Clear
+    </TelerikButton>
+    <TelerikButton ButtonType="ButtonType.Submit"
+                   ThemeColor="primary">
+        Create
+    </TelerikButton>
+</EditForm>
+
+
+@if (ListofPublishers != null)
+{
+
+
+    <TelerikListView Data="ListofPublishers"
+                 Pageable="Paging"
+                 PageSize="PageSizeOption"
+                 PageChanged="PageChangedEvent"
+                 OnDelete="DeletePublisher"
+                 OnUpdate="UpdatePublisher"
+                 OnCreate="AddPublisher"
+                 OnCancel="CancelHandler"
+                 OnEdit="EditHandler">
+        <HeaderTemplate>
+            <div class="col-12 row mt-3">
+                <label for="pagingid" class="col-form-label">
+                    Enable Paging:
+                    <TelerikCheckBox Class="form-control" Id="pagingid" @bind-Value="Paging"></TelerikCheckBox>
+                </label>
+            </div>
+            <div class="col-12 row">
+                Page Size
+                <TelerikDropDownList Data="PageSizeOptions"
+                                 @bind-Value="PageSizeOption"
+                                 Class="col-3">
+
+                </TelerikDropDownList>
+            </div>
+            <div class="col-12 row">
+                <ListViewCommandButton Command="Add" Icon="@FontIcon.Plus">Add</ListViewCommandButton>
+            </div>
+        </HeaderTemplate>
+        <Template Context="Publisher">
+            <div class="card mb-1">
+                <div class="row g-0">
+                    <div class="col-md-2">
+                        <img src="/avatar.jpg" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-body">
+                            <h5 class="card-title">@Publisher.Name</h5>
+                            <p class="card-subtitle">@Publisher?.City?.Name</p>
+                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <ListViewCommandButton Command="Delete" Icon="@FontIcon.Trash">Delete</ListViewCommandButton>
+                        <ListViewCommandButton Command="Edit" Icon="@FontIcon.Pencil">Edit</ListViewCommandButton>
+                    </div>
+                </div>
+            </div>
+        </Template>
+        <EditTemplate Context="publisher">
+            <div class="card mb-1">
+                <div class="row g-0">
+                    <div class="col-md-2">
+                        <img src="/avatar.jpg" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="publisherName" class="form-label">Name</label>
+                                <TelerikTextBox Id="publisherName"
+                                            Class="form-control"
+                                            @bind-Value="publisher.Name">
+                                </TelerikTextBox>
+
+                            </div>
+                            <div class="mb-3">
+                                <label for="city" class="form-label">Cities</label>
+                                <TelerikDropDownList Id="city"
+                                                 Class="form-control"
+                                                 Data="ListofCities"
+                                                 ValueField="@nameof(City.Id)"
+                                                 TextField="@nameof(City.Name)"
+                                                 @bind-Value="publisher.CityId">
+                                </TelerikDropDownList>
+                            </div>
+                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <ListViewCommandButton Command="Save" Icon="@FontIcon.Save">Save</ListViewCommandButton>
+                        <ListViewCommandButton Command="Cancel" Icon="@FontIcon.Cancel">Cancel</ListViewCommandButton>
+                    </div>
+                </div>
+            </div>
+
+
+        </EditTemplate>
+        <FooterTemplate>
+            <p class="font-weight-bolder">Total Count: @ListofPublishers.Count</p>
+        </FooterTemplate>
+    </TelerikListView>
+
+}

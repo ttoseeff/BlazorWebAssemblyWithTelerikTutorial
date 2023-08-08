@@ -29,6 +29,8 @@ namespace BlazorProject.Server
 
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IPublisherRepository, PublisherRepository>();
+            services.AddScoped<ICityRepository, CityRepository>();
 
             services.AddControllersWithViews();
             services.AddRazorPages();
