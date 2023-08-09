@@ -36,11 +36,10 @@
 </EditForm>
 
 
-@if (ListofPublishers != null)
+
+@if (PublishersByPage != null)
 {
-
-
-    <TelerikListView Data="ListofPublishers"
+    <TelerikListView Data="PublishersByPage"
                  Pageable="Paging"
                  PageSize="PageSizeOption"
                  PageChanged="PageChangedEvent"
@@ -48,7 +47,8 @@
                  OnUpdate="UpdatePublisher"
                  OnCreate="AddPublisher"
                  OnCancel="CancelHandler"
-                 OnEdit="EditHandler">
+                 OnEdit="EditHandler"
+                 OnRead="GetPublishersByPage">
         <HeaderTemplate>
             <div class="col-12 row mt-3">
                 <label for="pagingid" class="col-form-label">
@@ -129,8 +129,7 @@
 
         </EditTemplate>
         <FooterTemplate>
-            <p class="font-weight-bolder">Total Count: @ListofPublishers.Count</p>
+            <p class="font-weight-bolder">Total Count: @PublishersByPage?.Count</p>
         </FooterTemplate>
     </TelerikListView>
-
 }

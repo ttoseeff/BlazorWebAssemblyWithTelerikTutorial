@@ -10,5 +10,6 @@ namespace BlazorProject.Client.Services
         Task<IEnumerable<Publishers>> GetPublishers();
         Task DeletePublisher(int Id);
         Task<Publishers> UpdatePublisher(Publishers publisher);
+        Task<List<Publishers>> GetPublishersByPage(int pageNumber, int pageSize);
     }
 }

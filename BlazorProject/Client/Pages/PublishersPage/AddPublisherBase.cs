@@ -20,15 +20,16 @@ namespace BlazorProject.Client.Pages.PublishersPage
 
         public Publishers Publisher { get; set; } = new Publishers();
         protected List<Publishers> ListofPublishers { get; set; }
+        protected List<Publishers> PublishersByPage { get; set; } = new List<Publishers>();
         protected List<City> ListofCities { get; set; } = new List<City>();
         protected List<int> PageSizeOptions { get; set; } = new List<int>() { 2, 3, 4, 5, 6, 10 };
         protected int PageSizeOption { get; set; } = 3;
-        protected bool Paging { get; set; }
+        protected bool Paging { get; set; } = true;
         public int CurrentListPageNumber { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadAllPublisher();
+            //await LoadAllPublisher();
             await LoadAllCities();
         }
 
@@ -61,20 +62,20 @@ namespace BlazorProject.Client.Pages.PublishersPage
         {
             var publisher = args.Item as Publishers;
             await PublisherService.AddPublisher(publisher);
-            await LoadAllPublisher();
+            //await LoadAllPublisher();
         }
         protected async Task DeletePublisher(ListViewCommandEventArgs listViewCommandEventArgs)
         {
             var publisher = listViewCommandEventArgs.Item as Publishers;
             await PublisherService.DeletePublisher(publisher.Id);
-            await LoadAllPublisher();
+            //await LoadAllPublisher();
         }
 
         protected async Task UpdatePublisher(ListViewCommandEventArgs args)
         {
             var publisher = args.Item as Publishers;
             var resp = await PublisherService.UpdatePublisher(publisher);
-            await LoadAllPublisher();
+            //await LoadAllPublisher();
         }
 
         protected async Task EditHandler(ListViewCommandEventArgs args)
@@ -84,6 +85,15 @@ namespace BlazorProject.Client.Pages.PublishersPage
         protected async Task CancelHandler(ListViewCommandEventArgs args)
         {
             var publisher = args.Item as Publishers;
+        }
+
+        protected async Task GetPublishersByPage(ListViewReadEventArgs args)
+        {
+            int pageNumber = args.Request.Page;
+            int pageSize = args.Request.PageSize;
+            PublishersByPage = await PublisherService.GetPublishersByPage(pageNumber, pageSize);
+            args.Data = PublishersByPage;
+            args.Total = (await PublisherService.GetPublishers()).Count();
         }
     }
 }

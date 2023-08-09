@@ -3,6 +3,8 @@ using BlazorProject.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Security.Policy;
 using System.Threading.Tasks;
 
@@ -58,6 +60,15 @@ namespace BlazorProject.Server.Controllers
         {
             var changedPublisher = await publisherRepository.UpdatePublisher(publisher);
             return Ok(changedPublisher);
+        }
+
+        [HttpGet]
+        [Route("GetPublisersByPage")]
+        public async Task<ActionResult<IEnumerable<Publishers>>> GetPublishersByPage(int pageNumber, int pageSize)
+        {
+            await Task.Delay(1000);
+            var publishersByPage = await publisherRepository.GetPublishersByPage(pageNumber, pageSize);
+            return publishersByPage;
         }
     }
 }

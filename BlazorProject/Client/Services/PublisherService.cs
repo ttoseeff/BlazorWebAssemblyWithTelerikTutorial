@@ -57,5 +57,10 @@ namespace BlazorProject.Client.Services
             }
             return null;
         }
+
+        public async Task<List<Publishers>> GetPublishersByPage(int pageNumber, int pageSize)
+        {
+            return await client.GetFromJsonAsync<List<Publishers>>($"api/Publisher/GetPublisersByPage?pageNumber={pageNumber}&pageSize={pageSize}");
+        }
     }
 }

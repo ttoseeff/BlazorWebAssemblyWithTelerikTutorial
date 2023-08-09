@@ -10,5 +10,6 @@ namespace BlazorProject.Server.Models
         Task<List<Publishers>> GetAllPublishers();
         Task DeletePublisher(int Id);
         Task<Publishers> UpdatePublisher(Publishers publisher);
+        Task<List<Publishers>> GetPublishersByPage(int pageNumber, int pageSize);
     }
 }

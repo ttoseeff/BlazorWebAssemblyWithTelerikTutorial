@@ -27,7 +27,7 @@ namespace BlazorProject.Server.Models
         public async Task<List<Publishers>> GetAllPublishers()
         {
             return await Context.Publishers
-                .Include(x=> x.City)
+                .Include(x => x.City)
                 .OrderByDescending(x => x.Id)
                 .ToListAsync();
         }
@@ -47,6 +47,11 @@ namespace BlazorProject.Server.Models
             Context.Entry(publisherEntity).State = EntityState.Modified;
             await Context.SaveChangesAsync();
             return publisherEntity;
+        }
+
+        public async Task<List<Publishers>> GetPublishersByPage(int pageNumber, int pageSize)
+        {
+            return await Context.Publishers.OrderByDescending(x => x.Id).Include(x => x.City).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
     }
