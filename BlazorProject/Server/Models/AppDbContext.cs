@@ -22,6 +22,12 @@ namespace BlazorProject.Server.Models
 
         public DbSet<Publishers> Publishers { get; set; }   
 
+        public DbSet<Author> Authors { get; set; }
+
+        public DbSet<BookType> BookTypes { get; set; }
+
+        public DbSet<Book> Books { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -1,0 +1,143 @@
+﻿@page "/books"
+@using BlazorProject.Client.Models;
+@inherits BooksBase
+
+<h3>@(PageTitle)</h3>
+@if (BooksByPage == null)
+{
+    <h2>Loading...</h2>
+}
+else
+{
+    @* <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">AuthorName</th>
+                <th scope="col">Type</th>
+                <th scope="col">Price</th>
+                <th scope="col">Sales</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var book in ListOfBooks)
+            {
+                <tr>
+                    <th scope="row">@(book.Id)</th>
+                    <td>@(book.Title)</td>
+                    <td>@(book?.Author?.Name)</td>
+                    <td>@(book?.BookType?.Type)</td>
+                    <td>@(book.Price)</td>
+                    <td>@(book.Sales)</td>
+                </tr>
+            }
+        </tbody>
+    </table>*@
+    <p>you are on: @CurrentPage</p>
+    <TelerikButton OnClick="@(() => SortByColumn("Sales", Telerik.DataSource.ListSortDirection.Descending))">Sort By Sales</TelerikButton>
+    <TelerikButton OnClick="@(() => SortByColumn("Title", Telerik.DataSource.ListSortDirection.Ascending))">Sort By Title</TelerikButton>
+    <br />
+    <br />
+    <TelerikTextBox @bind-Value="@Title" Placeholder="Title"></TelerikTextBox>
+    <TelerikTextBox @bind-Value="@AutherName" Placeholder="Author Name"></TelerikTextBox>
+    <TelerikButton OnClick="FilterByTitleAndAutherName">Filter</TelerikButton>
+    <br />
+    @if (SelectedBooks != null)
+    {
+        foreach (var item in SelectedBooks)
+        {
+            <span>@item.Title, &nbsp;</span>
+        }
+    }
+    <br />
+    @*    
+
+
+*@
+    <TelerikGrid
+            TItem="@BooksDto"
+             Pageable="true"
+             PageSize="4"
+             @ref="BookGridRef"
+             Groupable="true"
+             FilterMode="GridFilterMode.FilterMenu"
+             Resizable="true"
+             Reorderable="true"
+             Sortable="true"
+             OnStateInit="@((GridStateEventArgs<BooksDto> args) => OnStateInitHandler(args))"
+             SelectionMode="GridSelectionMode.Multiple"
+             SelectedItemsChanged="@((IEnumerable<BooksDto> books) => SelectedItemsChangedHanlder(books))"
+             @bind-Page="@CurrentPage"
+             OnDelete="DeleteBook"
+             EditMode="@GridEditMode.Incell"
+             OnUpdate="UpdateBook"
+             OnCreate="CreateBook"
+             ConfirmDelete="true"
+             EnableLoaderContainer="true"
+             OnRead="@((GridReadEventArgs args) => ReadEventHandler(args))">
+        <GridToolBarTemplate>
+            <GridCommandButton Command="Add" Icon="@FontIcon.Plus" OnClick="BeforeAddingBook">Add</GridCommandButton>
+            <GridCommandButton Command="ExcelExport" Icon="@FontIcon.FileExcel" OnClick="BeforeAddingBook">Export to Excel</GridCommandButton>
+        </GridToolBarTemplate>
+        <GridExport>
+            <GridExcelExport FileName="@($"Books_{DateTime.Now.ToShortDateString()}")" AllPages="true"></GridExcelExport>
+        </GridExport>
+        <GridColumns>
+            <GridCheckboxColumn SelectAllMode="GridSelectAllMode.All"></GridCheckboxColumn>
+            <GridColumn Field="@nameof(BooksDto.Id)" Title="ID" Editable="false">
+                <GroupHeaderTemplate>
+                    <strong>Total Count: </strong> @context.Count
+                </GroupHeaderTemplate>
+            </GridColumn>
+            <GridColumn Field="@nameof(BooksDto.Title)" Title="Title"></GridColumn>
+            <GridColumn Field="Author.Name" Title="Auther Name">
+                <EditorTemplate>
+                    @{
+                        var currentBook = (context as BooksDto);
+                        <TelerikDropDownList Data="ListOfAuthors"
+                                         @bind-Value="@currentBook.AuthorId"
+                                     TextField="@nameof(Author.Name)"
+                                     ValueField="@nameof(Author.Id)">
+                        </TelerikDropDownList>
+                    }
+                </EditorTemplate>
+            </GridColumn>
+            <Telerik.Blazor.Components.GridColumn Field="BookType.Type" Title="Type">
+                <EditorTemplate>
+                    @{
+                        var currentBook = context as BooksDto;
+                        <TelerikDropDownList Data="ListOfBookTypes"
+                                         @bind-Value="@currentBook.BookTypeId"
+                                     TextField="@nameof(BookType.Type)"
+                                     ValueField="@nameof(BookType.Id)">
+                        </TelerikDropDownList>
+                    }
+                </EditorTemplate>
+            </Telerik.Blazor.Components.GridColumn>
+            <Telerik.Blazor.Components.GridColumn Field="@nameof(BooksDto.Price)" Title="Price">
+                <Template>
+                    @((context as BooksDto).Price != null ? Convert.ToDecimal((context as BooksDto).Price).ToString("C2") : (context as BooksDto).Price)
+                </Template>
+            </Telerik.Blazor.Components.GridColumn>
+            <Telerik.Blazor.Components.GridColumn Field="@nameof(BooksDto.Sales)" Title="Sales" Groupable="false">
+                <Template>
+                    @((context as BooksDto).Sales != null ? Convert.ToDecimal((context as BooksDto).Sales).ToString("C2") : (context as BooksDto).Sales)
+                </Template>
+                <GroupFooterTemplate>
+                    <string>Total Sales: </string> @context.Sum
+                </GroupFooterTemplate>
+            </Telerik.Blazor.Components.GridColumn>
+            <GridCommandColumn>
+                <GridCommandButton Command="Save" Icon="@FontIcon.Save" ShowInEdit="true">Save</GridCommandButton>
+                <GridCommandButton Command="Cancel" Icon="@FontIcon.Cancel" ShowInEdit="true">Cancel</GridCommandButton>
+                <GridCommandButton Command="Delete" Icon="@FontIcon.TableRowDelete">Delete</GridCommandButton>
+                <GridCommandButton Command="Edit" Icon="@FontIcon.Pencil">Edit</GridCommandButton>
+            </GridCommandColumn>
+        </GridColumns>
+        <GridAggregates>
+            <GridAggregate Field="@nameof(BooksDto.Id)" Aggregate="GridAggregateType.Count"></GridAggregate>
+            <GridAggregate Field="@nameof(BooksDto.Sales)" Aggregate="GridAggregateType.Sum"></GridAggregate>
+        </GridAggregates>
+    </TelerikGrid>
+}

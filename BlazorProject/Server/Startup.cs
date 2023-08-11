@@ -31,6 +31,9 @@ namespace BlazorProject.Server
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IPublisherRepository, PublisherRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
+            services.AddScoped<IBooksRepository, BooksRepository>();
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<IBookTypesRepository, BookTypesRepository>();
 
             services.AddControllersWithViews();
             services.AddRazorPages();

@@ -1,3 +1,4 @@
+using BlazorProject.Client.Models;
 using BlazorProject.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,7 @@ namespace BlazorProject.Client
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddSyncfusionBlazor();
             RegisterHttpSerivces(builder);
-
+            builder.Services.AddAutoMapper(typeof(MapperProfile));
             // Register the Telerik services.
             builder.Services.AddTelerikBlazor();
             await builder.Build().RunAsync();
@@ -44,6 +45,21 @@ namespace BlazorProject.Client
             builder.Services.AddHttpClient<ICityService, CityService>(client =>
             {
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+            });
+
+            builder.Services.AddHttpClient<IBooksService, BooksService>(client =>
+            {
+                client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+            });
+
+            builder.Services.AddHttpClient<IAuthorsService, AuthorsService>(client =>
+            {
+                client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+            });
+
+            builder.Services.AddHttpClient<IBookTypesService, BookTypesService>(Client =>
+            {
+                Client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
             });
         }
     }
