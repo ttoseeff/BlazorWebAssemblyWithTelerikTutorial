@@ -1,7 +1,9 @@
-﻿using BlazorProject.Server.Models;
+﻿using BlazorProject.Client.Models.Teleril;
+using BlazorProject.Server.Models;
 using BlazorProject.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BlazorProject.Server.Controllers
@@ -42,10 +44,16 @@ namespace BlazorProject.Server.Controllers
             await _BooksRepository.CreateBook(book);
             return Ok();
         }
-        [HttpGet("GetBooksByPage")]
-        public async Task<ActionResult> GetBooksByPage(int pageNumber, int pageSize)
+        [HttpPost("GetBooksByPage")]
+        public async Task<ActionResult> GetBooksByPage(int pageNumber, int pageSize, List<GridFilter> filters)
         {
-            return Ok(await _BooksRepository.GetBooksByPage(pageNumber, pageSize));
+            return Ok(await _BooksRepository.GetBooksByPage(pageNumber, pageSize, filters));
+        }
+
+        [HttpPost("GetBooksByPageCount")]
+        public async Task<ActionResult> GetBooksByPageCount(int pageNumber, int pageSize, List<GridFilter> filters)
+        {
+            return Ok(await _BooksRepository.GetBooksByPageCount(pageNumber, pageSize, filters));
         }
     }
 }

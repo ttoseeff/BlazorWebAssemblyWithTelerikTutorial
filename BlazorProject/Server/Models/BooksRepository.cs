@@ -1,11 +1,14 @@
-﻿using BlazorProject.Shared;
+﻿using BlazorProject.Client.Models.Teleril;
+using BlazorProject.Shared;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components.Stepper;
+using Telerik.DataSource;
 
 namespace BlazorProject.Server.Models
 {
@@ -20,7 +23,7 @@ namespace BlazorProject.Server.Models
 
         public async Task<List<Book>> GetAllBooks()
         {
-            var books = await _Context.Books.Include(x=> x.Author).Include(x=> x.BookType).ToListAsync();
+            var books = await _Context.Books.Include(x => x.Author).Include(x => x.BookType).ToListAsync();
             return books;
         }
         public async Task DeleteBook(int bookId)
@@ -54,15 +57,70 @@ namespace BlazorProject.Server.Models
             await _Context.SaveChangesAsync();
         }
 
-        public async Task<List<Book>> GetBooksByPage(int pageNumber, int pageSize)
+        public async Task<List<Book>> GetBooksByPage(int pageNumber, int pageSize, List<GridFilter> filters)
         {
-            var books =  await _Context.Books.OrderByDescending(x => x.Id)
+            IQueryable<Book> books = _Context.Books.OrderByDescending(x => x.Id)
                 .Include(x => x.Author)
-                .Include(x=> x.BookType)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            return books;
+                .Include(x => x.BookType);
+                
+
+            if (filters != null && filters.Count() > 0)
+            {
+                foreach (GridFilter filter in filters)
+                {
+                    if (filter.Member == nameof(Book.Title))
+                    {
+                        if (filter.Operator == FilterOperator.Contains)
+                        {
+                            books = books.Where(x => x.Title.Contains(filter.Value));
+                        }
+                    }
+                    if (filter.Member == nameof(Book.Sales))
+                    {
+                        if (filter.Operator == FilterOperator.IsEqualTo)
+                        {
+                            if (!string.IsNullOrEmpty(filter.Value))
+                                books = books.Where(x => x.Sales.Equals(Convert.ToDecimal(filter.Value)));
+                        }
+                    }
+
+                }
+            }
+
+            return await books.Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize).ToListAsync();
+        }
+
+        public async Task<int> GetBooksByPageCount(int pageNumber, int pageSize, List<GridFilter> filters)
+        {
+            IQueryable<Book> books = _Context.Books.OrderByDescending(x => x.Id)
+                .Include(x => x.Author)
+                .Include(x => x.BookType);
+
+            if (filters != null && filters.Count() > 0)
+            {
+                foreach (GridFilter filter in filters)
+                {
+                    if (filter.Member == nameof(Book.Title))
+                    {
+                        if (filter.Operator == FilterOperator.Contains)
+                        {
+                            books = books.Where(x => x.Title.Contains(filter.Value));
+                        }
+                    }
+                    if (filter.Member == nameof(Book.Sales))
+                    {
+                        if (filter.Operator == FilterOperator.IsEqualTo)
+                        {
+                            if (!string.IsNullOrEmpty(filter.Value))
+                                books = books.Where(x => x.Sales.Equals(Convert.ToDecimal(filter.Value)));
+                        }
+                    }
+
+                }
+            }
+
+            return await books.CountAsync();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlazorProject.Client.Models;
+using BlazorProject.Client.Models.Teleril;
 using BlazorProject.Client.Services;
 using BlazorProject.Shared;
 using Microsoft.AspNetCore.Components;
@@ -32,18 +33,20 @@ namespace BlazorProject.Client.Pages.BooksPage
 
         public TelerikGrid<BooksDto> BookGridRef { get; set; }
 
-        protected string Title { get; set; } 
+        protected string Title { get; set; }
         protected string AutherName { get; set; }
 
         public BooksDto CurrentlyEditedItem { get; set; }
         protected IEnumerable<BooksDto> SelectedBooks { get; set; } = Enumerable.Empty<BooksDto>();
 
-        public List<BooksDto> BooksByPage { get; set; }  = new List<BooksDto>();
+        public List<BooksDto> BooksByPage { get; set; } = new List<BooksDto>();
 
         protected async override Task OnInitializedAsync()
         {
-            //ListOfBooks = await GetAllBooks();
-            ListOfAuthors  = await GetAllAuthors();
+            // Uncomment for client side data
+            ListOfBooks = await GetAllBooks();
+
+            ListOfAuthors = await GetAllAuthors();
             ListOfBookTypes = await GetAllBookTypes();
         }
 
@@ -71,7 +74,7 @@ namespace BlazorProject.Client.Pages.BooksPage
 
         protected async Task FilterByTitleAndAutherName()
         {
-            
+
             CompositeFilterDescriptor AuthorFilter = new CompositeFilterDescriptor()
             {
                 FilterDescriptors = new FilterDescriptorCollection()
@@ -99,7 +102,7 @@ namespace BlazorProject.Client.Pages.BooksPage
         private async Task<List<BooksDto>> GetAllBooks()
         {
             List<Book> books = await _BooksService.GetAllBooks();
-            ListOfBooks =  _Mapper.Map<List<BooksDto>>(books);
+            ListOfBooks = _Mapper.Map<List<BooksDto>>(books);
             return ListOfBooks;
         }
 
@@ -170,9 +173,10 @@ namespace BlazorProject.Client.Pages.BooksPage
         protected async Task DeleteBook(GridCommandEventArgs args)
         {
             var bookDto = args.Item as BooksDto;
-            var book = _Mapper.Map<Book> (bookDto);
+            var book = _Mapper.Map<Book>(bookDto);
             await _BooksService.DeleteBook(book.Id);
-            //ListOfBooks = await GetAllBooks();
+            // Uncomment for client side data
+            ListOfBooks = await GetAllBooks();
         }
 
         protected async Task UpdateBook(GridCommandEventArgs args)
@@ -180,22 +184,24 @@ namespace BlazorProject.Client.Pages.BooksPage
             var bookDto = args.Item as BooksDto;
             var book = _Mapper.Map<Book>(bookDto);
             await _BooksService.UpdateBook(book);
-            //ListOfBooks = await GetAllBooks();
+            // Uncomment for client side data
+            ListOfBooks = await GetAllBooks();
         }
         protected async Task CreateBook(GridCommandEventArgs args)
         {
             var bookDto = args.Item as BooksDto;
             var book = _Mapper.Map<Book>(bookDto);
             await _BooksService.CreateBook(book);
-            //ListOfBooks = await GetAllBooks();
+            // Uncomment for client side data
+            ListOfBooks = await GetAllBooks();
         }
 
         protected void BeforeAddingBook(GridCommandEventArgs args)
         {
             args.Item = new Book()
             {
-               Author = new Author(),
-               BookType = new BookType()
+                Author = new Author(),
+                BookType = new BookType()
             };
             args.IsCancelled = false;
 
@@ -210,11 +216,30 @@ namespace BlazorProject.Client.Pages.BooksPage
         {
             int pageIndex = args.Request.Page;
             int pageSize = args.Request.PageSize;
-            var books = await GetAllBooks(); // await _BooksService.GetBooksByPage(pageIndex, pageSize);
+            List<GridFilter> filters = new List<GridFilter>();
+            foreach (var item in args.Request.Filters)
+            {
+                if (item is CompositeFilterDescriptor)
+                {
+                    CompositeFilterDescriptor currFilter = item as CompositeFilterDescriptor;
+                    // by design, there will actually be 2 only, this showcases the concept and the types
+                    foreach (FilterDescriptor nestedFilter in currFilter.FilterDescriptors)
+                    {
+                        filters.Add(new GridFilter()
+                        {
+                            Member = nestedFilter.Member,
+                            Operator = nestedFilter.Operator,
+                            Value = nestedFilter.Value.ToString(),
+                            MemberType = nestedFilter.MemberType.ToString(),
+                        });
+                    }
+                }
+            }
+            var books = await _BooksService.GetBooksByPage(pageIndex, pageSize, filters);
             BooksByPage = _Mapper.Map<List<BooksDto>>(books);
-            var result = BooksByPage.ToDataSourceResult(args.Request);
-            args.Data = result.Data;
-            args.Total = (await GetAllBooks()).Count();
+            //var result = BooksByPage.ToDataSourceResult(args.Request);
+            args.Data = BooksByPage;
+            args.Total = await _BooksService.GetBooksByPageCount(pageIndex, pageSize, filters);
         }
     }
 }

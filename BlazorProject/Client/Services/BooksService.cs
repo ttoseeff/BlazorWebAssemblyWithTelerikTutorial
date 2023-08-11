@@ -1,4 +1,7 @@
-﻿using BlazorProject.Shared;
+﻿using BlazorProject.Client.Models.Teleril;
+using BlazorProject.Shared;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -37,9 +40,28 @@ namespace BlazorProject.Client.Services
             await _Client.PostAsJsonAsync($"api/Books", book);
         }
 
-        public async Task<List<Book>> GetBooksByPage(int pageIndex, int pageSize)
+        public async Task<List<Book>> GetBooksByPage(int pageIndex, int pageSize, List<GridFilter> filters)
         {
-            return await _Client.GetFromJsonAsync<List<Book>>($"api/Books/GetBooksByPage?pageNumber={pageIndex}&pageSize={pageSize}");
+            var response = await _Client.PostAsJsonAsync($"api/Books/GetBooksByPage?pageNumber={pageIndex}&pageSize={pageSize}", filters);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+            var books = JsonConvert.DeserializeObject<List<Book>>(content);
+            return books;
+        }
+
+        public async Task<int> GetBooksByPageCount(int pageIndex, int pageSize, List<GridFilter> filters)
+        {
+            var response = await _Client.PostAsJsonAsync($"api/Books/GetBooksByPageCount?pageNumber={pageIndex}&pageSize={pageSize}", filters);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+            var books = JsonConvert.DeserializeObject<int>(content);
+            return books;
         }
     }
 }

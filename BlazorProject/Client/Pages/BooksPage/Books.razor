@@ -52,11 +52,14 @@ else
     }
     <br />
     @*    
-
-
+        to change into server type add OnRead and TItem attributes in Telerik Grid
+            OnRead="@((GridReadEventArgs args) => ReadEventHandler(args))"
+            TItem="@BooksDto"
+        and remove Data attribue
+            Data="ListOfBooks"
 *@
     <TelerikGrid
-            TItem="@BooksDto"
+             Data="ListOfBooks"
              Pageable="true"
              PageSize="4"
              @ref="BookGridRef"
@@ -70,12 +73,12 @@ else
              SelectedItemsChanged="@((IEnumerable<BooksDto> books) => SelectedItemsChangedHanlder(books))"
              @bind-Page="@CurrentPage"
              OnDelete="DeleteBook"
-             EditMode="@GridEditMode.Incell"
+             EditMode="@GridEditMode.Popup"
              OnUpdate="UpdateBook"
              OnCreate="CreateBook"
              ConfirmDelete="true"
              EnableLoaderContainer="true"
-             OnRead="@((GridReadEventArgs args) => ReadEventHandler(args))">
+             >
         <GridToolBarTemplate>
             <GridCommandButton Command="Add" Icon="@FontIcon.Plus" OnClick="BeforeAddingBook">Add</GridCommandButton>
             <GridCommandButton Command="ExcelExport" Icon="@FontIcon.FileExcel" OnClick="BeforeAddingBook">Export to Excel</GridCommandButton>
