@@ -1,6 +1,6 @@
 # BlazorWebAssemblyWithTelerikTutorial
 
-In this Blazor Web Assembly Practice, I Added Telerik UI work blazor and worked on different components of Telerik UI Components.
+In this Blazor Web Assembly Practice, I Added Telerik UI with blazor and worked on different components of Telerik UI Components.
 These components are:
 
 TelerikAutoComplete
