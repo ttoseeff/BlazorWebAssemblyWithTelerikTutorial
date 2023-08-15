@@ -17,4 +17,4 @@ Consuming APIs
 
 Apart from that, I worked on CRUD while learning for libaray Managment like Books Author Publisher Pages.
 Also configured SyncFusion UI for Blazor.
-implemented ORM Entity Framework Core with Code First Approach.
+implemented ORM Entity Framework Core with Code First Approach. 
