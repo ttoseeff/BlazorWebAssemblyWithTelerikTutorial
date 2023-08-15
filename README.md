@@ -1,14 +1,22 @@
 # BlazorWebAssemblyWithTelerikTutorial
 
 In this Blazor Web Assembly Practice, I Added Telerik UI work blazor and worked on different components of Telerik UI Components.
-These components are: 
+These components are:
+
 TelerikAutoComplete
+
 TelerikTextBox
+
 TelerikCheckBox
+
 TelerikDropDownList
+
 TelerikMultiSelect
+
 TelerikListView
+
 TelerikGrid
+
 
 
 Along with that, I also have implemented Repository Pattern in the Server Project of Web Assembly.
